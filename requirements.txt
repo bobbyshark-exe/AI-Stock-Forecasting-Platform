@@ -1,0 +1,18 @@
+#core DS
+pandas              #for data manipulation, dataframe management
+numpy               #for numerical operationsm, array management
+
+#data auqistion
+yfinance            #for downloading histroical stock data
+pandas-datareader   #for importating FRED datasets 
+ta                  #Calculating technical analysis 
+# newspaper3k       #for scraping news articles (Future Integration)
+
+#ai & ml
+tensorflow          #the deep learning framework (by google) used 
+scikit-learn
+xgboost
+
+#plotting & notebooks
+matplotlib          #for static, publication-qaulity plots and graphs
+#jupyter            #for running the .ipynb notebook environment

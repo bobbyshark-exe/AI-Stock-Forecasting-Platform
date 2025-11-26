@@ -1,0 +1,20 @@
+#python 
+__pycache__/
+*.pyc
+
+#enviroment
+.venv/
+venv/
+.env
+
+#ide
+.vscode/
+idea/
+
+#data & models
+/models/
+*.h5
+
+#notebook
+.ipynb_checkpoints/
+
