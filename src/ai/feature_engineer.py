@@ -14,7 +14,7 @@ import pandas as pd
 from ta.momentum import RSIIndicator 
 from ta.trend import MACD
 from sklearn.preprocessing import MinMaxScaler
-from data.data_preprocessing import merge_and_preprocessing_data
+from src.data.data_preprocessing import merge_and_preprocess_data
 
 # --- FEATURE CREATION FUNCTIONS ---
 
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     print("--- Testing Feature Engineering ---")
     
     # 1. Get and Preprocess Data
-    merged_df = merge_and_preprocessing_data(ticker="MSFT", fred_serie_id="DGS10", start_date="2018-01-01")
+    merged_df = merge_and_preprocess_data(ticker="MSFT", fred_series_id="DGS10", start_date="2018-01-01")
     print(f"Preprocessed DF shape: {merged_df.shape}")
 
     # 2. Add Technical Indicators

@@ -1,7 +1,7 @@
 import yfinance as yf
 import pandas as pd
 import pandas_datareader.data as web
-from datatime import datetime
+from datetime import datetime  
 
 
 #goes through and fetches yf data and then sees if the data for the ticker exist and returns (if exists - Data & if not returns error)

@@ -12,13 +12,18 @@ Summary of recent feature changes:
 import numpy as np
 import pandas as pd
 # Import XGBoost for regression
-import xgboost as xgb 
+try:
+    import xgboost as xgb
+    _XGBOOST_AVAILABLE = True
+except Exception:
+    xgb = None
+    _XGBOOST_AVAILABLE = False
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import StandardScaler
 
 # Import pipeline functions
-from data.data_preprocessing import merge_and_preprocess_data
+from src.data.data_preprocessing import merge_and_preprocess_data
 from src.ai.feature_engineer import add_technical_indicators # Use this to get engineered features
 
 # --- DATA PREPARATION FOR XGBOOST ---
@@ -54,22 +59,37 @@ def prepare_tabular_data(ticker: str, fred_series_id: str, start_date: str, pred
 
 # --- MODEL BUILDING AND TRAINING ---
 
-def build_xgboost_model(params: dict = None) -> xgb.XGBRegressor:
-    """Initializes and returns an XGBoost Regressor model."""
-    default_params = {
-        'objective': 'reg:squarederror',
-        'n_estimators': 300,
-        'learning_rate': 0.05,
-        'max_depth': 5,
-        'random_state': 42,
-        'n_jobs': -1
-    }
-    
-    if params:
-        default_params.update(params)
-        
-    model = xgb.XGBRegressor(**default_params)
-    return model
+def build_xgboost_model(params: dict = None):
+    """Initializes and returns an XGBoost Regressor if available.
+
+    Falls back to a `RandomForestRegressor` from scikit-learn if `xgboost`
+    is not installed, allowing the pipeline to run in environments without
+    XGBoost. Returns the model instance.
+    """
+    if _XGBOOST_AVAILABLE:
+        default_params = {
+            'objective': 'reg:squarederror',
+            'n_estimators': 300,
+            'learning_rate': 0.05,
+            'max_depth': 5,
+            'random_state': 42,
+            'n_jobs': -1
+        }
+        if params:
+            default_params.update(params)
+        return xgb.XGBRegressor(**default_params)
+    else:
+        # Lazy import sklearn to avoid requiring XGBoost; this provides a reasonable fallback.
+        from sklearn.ensemble import RandomForestRegressor
+        default_params = {
+            'n_estimators': 200,
+            'max_depth': 8,
+            'random_state': 42,
+            'n_jobs': -1
+        }
+        if params:
+            default_params.update(params)
+        return RandomForestRegressor(**default_params)
 
 def run_xgboost_pipeline(ticker="MSFT", fred_series_id="DGS10", start_date="2015-01-01", 
                          test_ratio=0.2):

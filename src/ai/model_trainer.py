@@ -19,8 +19,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 
 # Import pipeline functions
-from data.data_preprocessing import merge_and_preprocess_data
-# FIX: Adjusted relative import based on typical structure. If this file is in 'src/ai/', use 'from .feature_engineer'
+from src.data.data_preprocessing import merge_and_preprocess_data
 from src.ai.feature_engineer import add_technical_indicators, create_lstm_sequences, train_val_test_split_sequences
 
 def build_lstm_model(input_shape):
