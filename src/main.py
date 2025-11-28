@@ -81,7 +81,8 @@ def run_hybrid_pipeline(ticker="MSFT", predict_ahead=1):
     
     # Define Features for XGBoost
     # Now we include the new 'LSTM_Momentum' feature!
-    EXCLUDE = ['Close', TARGET_COL, 'dummy_target']
+    # We exclude ALL raw price columns to force reliance on LSTM and technical indicators
+    EXCLUDE = ['Close', 'Open', 'High', 'Low', 'Volume', TARGET_COL, 'dummy_target']
     HYBRID_FEATURES = [c for c in hybrid_df.columns if c not in EXCLUDE]
     
     print(f"Hybrid Features: {HYBRID_FEATURES}")

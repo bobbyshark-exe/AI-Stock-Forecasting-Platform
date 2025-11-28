@@ -40,16 +40,23 @@ def get_stock_data(ticker, period="5y"):
 
 #goes through and fetches FRED data and then sees if the data for the time period exist and returns (if exists - Data & if not returns error)
 def get_fred_data(series_id, start_date, end_date):
-    #fetches FRED data (Fed Reserve Economic Data)
-    try:
-        # pandas_datareader accepts strings or datetime objects
-        data = web.DataReader(series_id, "fred", start_date, end_date)
-        print(f"Successfully fetched FRED data for {series_id}.")
-        return data
-    
-    except Exception as e:
-        print(f"Error fetching FRED data for {series_id}: {e}")
-        return pd.DataFrame()
+    # Fetches FRED data (Federal Reserve Economic Data) with simple retry logic
+    import time
+    attempts = 3
+    for attempt in range(1, attempts + 1):
+        try:
+            # pandas_datareader accepts strings or datetime objects
+            data = web.DataReader(series_id, "fred", start_date, end_date)
+            print(f"Successfully fetched FRED data for {series_id} (attempt {attempt}).")
+            return data
+        except Exception as e:
+            print(f"Error fetching FRED data for {series_id} on attempt {attempt}: {e}")
+            if attempt < attempts:
+                time.sleep(2 * attempt)  # backoff
+                continue
+            else:
+                print(f"Failed to fetch FRED data for {series_id} after {attempts} attempts.")
+                return pd.DataFrame()
 
 
 #test run using Apple Stock!
