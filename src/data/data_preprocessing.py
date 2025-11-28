@@ -15,8 +15,13 @@ def merge_and_preprocess_data(ticker="AAPL", fred_series_id="DGS10", start_date=
         print("Error: One or both dataframes are empty. Cannot merge.")
         return pd.DataFrame()
     
-    # Select specific columns
-    stock_df = stock_df[['Close', 'Volume']]
+    # Select specific columns - keep full OHLCV so downstream pipelines have expected features
+    expected_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
+    missing = [c for c in expected_cols if c not in stock_df.columns]
+    if missing:
+        print(f"Error: stock data missing expected columns: {missing}")
+        return pd.DataFrame()
+    stock_df = stock_df[expected_cols]
     
     # FIX 2: Fixed typo 'colums' -> 'columns'
     fred_df.columns = ['FRED_Value']
