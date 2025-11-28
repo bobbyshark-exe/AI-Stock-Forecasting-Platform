@@ -45,7 +45,8 @@ def prepare_tabular_data(ticker: str, fred_series_id: str, start_date: str, pred
     # 3. Define Features (Using all engineered and raw data except target)
     # Note: We exclude 'Open', 'High', 'Low', 'Close', 'Volume' if we only want indicators, 
     # but for a strong baseline, we use everything.
-    EXCLUDE_COLS = ['Close', TARGET_COL] # Exclude the current day's price and the target
+    # Exclude raw price columns so XGBoost focuses on engineered indicators + LSTM momentum
+    EXCLUDE_COLS = ['Open', 'High', 'Low', 'Close', TARGET_COL]
     FEATURES = [col for col in features_df.columns if col not in EXCLUDE_COLS]
     
     X = features_df[FEATURES]
@@ -67,11 +68,12 @@ def build_xgboost_model(params: dict = None):
     XGBoost. Returns the model instance.
     """
     if _XGBOOST_AVAILABLE:
+        # Tweaked defaults for improved performance; consider running a CV/tuning step
         default_params = {
             'objective': 'reg:squarederror',
-            'n_estimators': 300,
-            'learning_rate': 0.05,
-            'max_depth': 5,
+            'n_estimators': 500,
+            'learning_rate': 0.03,
+            'max_depth': 6,
             'random_state': 42,
             'n_jobs': -1
         }
@@ -81,9 +83,10 @@ def build_xgboost_model(params: dict = None):
     else:
         # Lazy import sklearn to avoid requiring XGBoost; this provides a reasonable fallback.
         from sklearn.ensemble import RandomForestRegressor
+        # Slightly stronger fallback settings to match more complex trees
         default_params = {
-            'n_estimators': 200,
-            'max_depth': 8,
+            'n_estimators': 300,
+            'max_depth': 12,
             'random_state': 42,
             'n_jobs': -1
         }

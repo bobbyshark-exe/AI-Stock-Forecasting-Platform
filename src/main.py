@@ -22,8 +22,9 @@ def run_hybrid_pipeline(ticker="MSFT", predict_ahead=1):
     # 1. Train the LSTM and get the model + scalers
     # We use a smaller epoch count for testing (e.g., 5 or 10)
     lstm_model, history, target_scaler = run_training_pipeline(
-        ticker=ticker, 
-        epochs=10, 
+        ticker=ticker,
+        # Increased epochs for better LSTM training (data-science mode)
+        epochs=50,
         predict_ahead=predict_ahead
     )
     
